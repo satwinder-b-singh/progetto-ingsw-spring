@@ -345,25 +345,7 @@ public class UserController {
 		return new ResponseEntity<cartResp>(resp, HttpStatus.ACCEPTED);
 	}
 
-	@GetMapping("/findByCategory")
-	public ResponseEntity< prodResp> findByCategory(
-	)//@RequestBody  String category
-			throws IOException {
-				prodResp resp = new prodResp();
-				try {
-					resp.setStatus(ResponseCode.SUCCESS_CODE);
-					resp.setMessage(ResponseCode.LIST_SUCCESS_MESSAGE);
 
-					resp.setOblist(prodRepo.findAllByName("size"));
-				} catch (Exception e) {
-					resp.setStatus(ResponseCode.FAILURE_CODE);
-					resp.setMessage(e.getMessage());
-
-				}
-
-				return new ResponseEntity<prodResp>(resp, HttpStatus.ACCEPTED);
-	 
-	}
 	@GetMapping("/placeOrder") // DA VERIFICARE
 	public ResponseEntity<serverResp> placeOrder(@RequestHeader(name = WebConstants.USER_AUTH_TOKEN) String AUTH_TOKEN)
 			throws IOException {

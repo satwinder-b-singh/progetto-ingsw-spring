@@ -1,6 +1,7 @@
 package com.spring.model;
 
 import java.io.Serializable;
+import java.util.Arrays;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -85,6 +86,13 @@ public class Product implements Serializable {
 
 	public byte[] getProductimage() {
 		return productimage;
+	}
+
+	@Override
+	public String toString() {
+		return "Product [productid=" + productid + ", description=" + description + ", productname=" + productname
+				+ ", price=" + price + ", quantity=" + quantity + ", categoria=" + categoria + ", size=" + size
+				+ ", sex=" + sex + ", productimage=" + Arrays.toString(productimage) + "]";
 	}
 
 	public void setProductimage(byte[] productimage) {
