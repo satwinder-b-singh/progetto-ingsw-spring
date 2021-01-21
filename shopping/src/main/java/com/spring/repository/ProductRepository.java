@@ -28,7 +28,6 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
 
 	List<Product> findAll(Specification<Product> spec);
 
- 
 	static Specification<Product> nameLike(String productname) {
 		return (root, query, criteriaBuilder) -> criteriaBuilder.like(root.get(ProductMetaModel.PRODUCT_NAME),
 				"%" + productname + "%");
@@ -43,12 +42,29 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
 		return (root, query, criteriaBuilder) -> criteriaBuilder.like(root.get(ProductMetaModel.SIZE),
 				"%" + size + "%");
 	}
+
 	static Specification<Product> sexLike(String sex) {
-		return (root, query, criteriaBuilder) -> criteriaBuilder.like(root.get(ProductMetaModel.SEX),
-				"%" + sex + "%");
+		return (root, query, criteriaBuilder) -> criteriaBuilder.like(root.get(ProductMetaModel.SEX), "%" + sex + "%");
 	}
 
-	public static Specification<Product> getProductByCategoryAndSizeAndSex(String categoria, String size, String sex) {
-		return Specification.where(categoryLike(categoria)).and(sizeLike(size).and(sexLike(sex))); 
+	public static Specification<Product> getProductBySizeAndCategoryAndSex(String size, String categoria, String sex) {// CATEGORIA
+																														// &&
+																														// SIZE
+																														// &&
+																														// SEX
+		return Specification.where(categoryLike(categoria)).and(sizeLike(size).and(sexLike(sex)));
+	}
+
+	public static Specification<Product> getProductByCategoryAndSex(String categoria, String sex) { // CATEGORIA && SEX
+		return Specification.where(categoryLike(categoria)).and(sexLike(sex));
+	}
+
+	public static Specification<Product> getProductBySizeAndSex(String size, String sex) { // SIZE && SEX
+		return Specification.where(sizeLike(size)).and(sexLike(sex));
+	}
+
+	public static Specification<Product> getProductByCategoryAndSize(String categoria, String size) { // CATEGORIA &&
+																										// SIZE
+		return Specification.where(categoryLike(categoria)).and(sizeLike(size));
 	}
 }
