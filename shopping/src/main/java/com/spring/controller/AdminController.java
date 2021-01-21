@@ -97,7 +97,7 @@ public class AdminController {
 			resp.setStatus(ResponseCode.BAD_REQUEST_CODE);
 			resp.setMessage(ResponseCode.BAD_REQUEST_MESSAGE);
 
-		} else if (!Validator.isStringEmpty(AUTH_TOKEN) ) {//&& jwtutil.checkToken(AUTH_TOKEN) != null
+		} else if (!Validator.isStringEmpty(AUTH_TOKEN) && jwtutil.checkToken(AUTH_TOKEN) != null ) { 
 			try {
 
 				Product prod = new Product( );
@@ -107,6 +107,8 @@ public class AdminController {
 				prod.setQuantity(Integer.parseInt(quantity));
 				prod.setCategoria(category);
 				prod.setSize(size);
+				prod.setSize(sex);
+
 				prod.setProductimage(prodImage.getBytes());
 				prodRepo.save(prod);
 
