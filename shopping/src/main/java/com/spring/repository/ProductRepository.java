@@ -28,16 +28,7 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
 
 	List<Product> findAll(Specification<Product> spec);
 
-//	  static Specification<Product> nameLike(String productname){
-//		  return new Specification<Product>() {
-//			   @Override
-//			   public Predicate toPredicate(Root<Product> root, 
-//			                  CriteriaQuery<?> query, 
-//			                  CriteriaBuilder criteriaBuilder) {
-//			     return criteriaBuilder.like(root.get(ProductMetaModel.PRODUCT_NAME), "%"+productname+"%");
-//			   }
-//			  };
-//			}
+ 
 	static Specification<Product> nameLike(String productname) {
 		return (root, query, criteriaBuilder) -> criteriaBuilder.like(root.get(ProductMetaModel.PRODUCT_NAME),
 				"%" + productname + "%");

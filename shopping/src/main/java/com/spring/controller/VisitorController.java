@@ -13,8 +13,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.spring.constants.ProductMetaModel;
 import com.spring.constants.ResponseCode;
 import com.spring.model.Product;
 import com.spring.repository.ProductRepository;
@@ -50,21 +52,27 @@ public class VisitorController {
 		return new ResponseEntity<prodResp>(resp, HttpStatus.ACCEPTED);
 	}
 
-	@RequestMapping("/findByProductName")
-	public ResponseEntity<prodResp> findByProductName(//@RequestParam(name = ProductMetaModel.SIZE) String size,
-	// @RequestParam(name = ProductMetaModel.CATECTORIA) String categoria
+	@RequestMapping
+	public ResponseEntity<prodResp> findbyCategory(@RequestParam)
 
-	// ,@RequestParam(name = ProductMetaModel.PRICE) String price
-	)//
-			throws IOException {
+	@RequestMapping("/findBySizeAndCategoryAndSex")
+	public ResponseEntity<prodResp> findByProductName(
+			@RequestParam(name = ProductMetaModel.SIZE, defaultValue = "") String size,
+			@RequestParam(name = ProductMetaModel.CATEGORIA, defaultValue = "") String categoria,
+			@RequestParam(name = ProductMetaModel.SEX, defaultValue = "") String sex) 
+     throws IOException {
 		prodResp resp = new prodResp();
 		try {
+			if(size.equals("") )
+			{
+				
+			}
 			resp.setStatus(ResponseCode.SUCCESS_CODE);
 			resp.setMessage(ResponseCode.LIST_SUCCESS_MESSAGE);
 			List<Product> products = prodRepo
-					.findAll(ProductRepository.getProductByCategoryAndSizeAndSex("Giubotto", "L","M"));
+					.findAll(ProductRepository.getProductByCategoryAndSizeAndSex(categoria, size, sex));
 			System.out.println(products);
-			resp.setOblist(products);// prodRepo.findAllBySize(category)
+			resp.setOblist(products);
 		} catch (Exception e) {
 			resp.setStatus(ResponseCode.FAILURE_CODE);
 			resp.setMessage(e.getMessage());
@@ -74,7 +82,5 @@ public class VisitorController {
 		return new ResponseEntity<prodResp>(resp, HttpStatus.ACCEPTED);
 
 	}
-	
-	 
 
 }
