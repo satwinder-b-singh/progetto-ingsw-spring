@@ -12,7 +12,9 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -52,7 +54,44 @@ public class VisitorController {
 
 		return new ResponseEntity<prodResp>(resp, HttpStatus.ACCEPTED);
 	}
+	@PostMapping("/getProductsById") // Funziona , ma non carica l'img
+	public ResponseEntity<prodResp> getProductsById(@RequestBody  String id) throws IOException {
 
+		prodResp resp = new prodResp();
+ 
+		try {
+			resp.setStatus(ResponseCode.SUCCESS_CODE);
+			resp.setMessage(ResponseCode.LIST_SUCCESS_MESSAGE);
+
+			resp.setProduct(prodRepo.findByProductid(Integer.parseInt(id)));
+			System.out.println(resp.getOblist());
+		} catch (Exception e) {
+			resp.setStatus(ResponseCode.FAILURE_CODE);
+			resp.setMessage(e.getMessage());
+
+		}
+
+		return new ResponseEntity<prodResp>(resp, HttpStatus.ACCEPTED);
+	}
+	@PostMapping("/getProductsByCategory") // Funziona , ma non carica l'img
+	public ResponseEntity<prodResp> getProductsByCategory(@RequestBody  String categoria) throws IOException {
+
+		prodResp resp = new prodResp();
+ 
+		try {
+			resp.setStatus(ResponseCode.SUCCESS_CODE);
+			resp.setMessage(ResponseCode.LIST_SUCCESS_MESSAGE);
+
+			resp.setOblist(prodRepo.findAll(ProductRepository.categoryLike(categoria)));
+			System.out.println(resp.getOblist());
+		} catch (Exception e) {
+			resp.setStatus(ResponseCode.FAILURE_CODE);
+			resp.setMessage(e.getMessage());
+
+		}
+
+		return new ResponseEntity<prodResp>(resp, HttpStatus.ACCEPTED);
+	}
 //	@RequestMapping
 //	public ResponseEntity<prodResp> findbyCategory(@RequestParam)
 

@@ -229,14 +229,16 @@ public class UserController {
 
 	@PostMapping("/addToCart") // FUNZIONA
 	public ResponseEntity<serverResp> addToCart(@RequestHeader(name = WebConstants.USER_AUTH_TOKEN) String AUTH_TOKEN,
-			@RequestBody Product productId	) throws IOException {
-		 
+			@RequestParam Product productId	) throws IOException {
+		 System.out.println("Entro in aggiungi al carrello");
 		serverResp resp = new serverResp();
 		 if (!Validator.isStringEmpty(AUTH_TOKEN) && jwtutil.checkToken(AUTH_TOKEN) != null)
 				 {
 			try {
 
 				User loggedUser = jwtutil.checkToken(AUTH_TOKEN);
+				System.out.println("L'utente loggato è : "+ loggedUser);
+				System.out.println("il prodotto che aggiungo è : "+productId.getProductid());
 				Product cartItem = prodRepo.findByProductid(productId.getProductid());
 				System.out.println("a");
 				Bufcart buf = new Bufcart();

@@ -9,6 +9,7 @@ public class prodResp {
 	private String message;
 	private String AUTH_TOKEN;
 	private List<Product> oblist;
+	private Product product;
 
 	public String getStatus() {
 		return status;
@@ -40,6 +41,15 @@ public class prodResp {
 
 	public void setOblist(List<Product> oblist) {
 		this.oblist = oblist;
+	}
+
+	public void setProduct(Product findByProductid) {
+		this.product =findByProductid ;
+		
+	}
+
+	public Product getProduct() {
+		return product;
 	}
 
 }
