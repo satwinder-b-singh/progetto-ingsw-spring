@@ -185,7 +185,7 @@ public class UserController {
 		return new ResponseEntity<response>(resp, HttpStatus.ACCEPTED);
 	}
 
-	@PostMapping("/getProducts") // Funziona , ma non carica l'img
+	@PostMapping("/getProducts")
 	public ResponseEntity<prodResp> getProducts(@RequestHeader(name = WebConstants.USER_AUTH_TOKEN) String AUTH_TOKEN)
 			throws IOException {
 
@@ -227,43 +227,35 @@ public class UserController {
 		return new ResponseEntity<prodResp>(resp, HttpStatus.ACCEPTED);
 	}
 
-	@PostMapping("/addToCart") // FUNZIONA
+	@PostMapping("/addToCart")
 	public ResponseEntity<serverResp> addToCart(@RequestHeader(name = WebConstants.USER_AUTH_TOKEN) String AUTH_TOKEN,
-			@RequestParam Product productId	) throws IOException {
-		 System.out.println("Entro in aggiungi al carrello");
+			@RequestBody String productId) throws IOException {
 		serverResp resp = new serverResp();
-		 if (!Validator.isStringEmpty(AUTH_TOKEN) && jwtutil.checkToken(AUTH_TOKEN) != null)
-				 {
-			try {
-
-				User loggedUser = jwtutil.checkToken(AUTH_TOKEN);
-				System.out.println("L'utente loggato è : "+ loggedUser);
-				System.out.println("il prodotto che aggiungo è : "+productId.getProductid());
-				Product cartItem = prodRepo.findByProductid(productId.getProductid());
-				System.out.println("a");
-				Bufcart buf = new Bufcart();
-				buf.setEmail(loggedUser.getEmail());
-				buf.setQuantity(1);
-				buf.setPrice(cartItem.getPrice());
-				buf.setProductId(cartItem);
-				buf.setProductname(cartItem.getProductname());
-				Date date = new Date();
-				buf.setDateAdded(date);
-				System.out.println("a");
-				cartRepo.save(buf);
-				resp.setStatus(ResponseCode.SUCCESS_CODE);
-				resp.setMessage(ResponseCode.CART_UPD_MESSAGE_CODE);
-				resp.setAUTH_TOKEN(AUTH_TOKEN);
-				System.out.println("ci simu?");
-			} catch (Exception e) {
-				resp.setStatus(ResponseCode.FAILURE_CODE);
-				resp.setMessage(e.getMessage());
-				resp.setAUTH_TOKEN(AUTH_TOKEN);
-			}
-		} else {
-			resp.setStatus(ResponseCode.FAILURE_CODE);
-			resp.setMessage(ResponseCode.FAILURE_MESSAGE);
-		}
+		
+		  if (!Validator.isStringEmpty(AUTH_TOKEN) && jwtutil.checkToken(AUTH_TOKEN) !=
+		  null) { 
+			  try {
+		  User loggedUser = jwtutil.checkToken(AUTH_TOKEN);
+		  Product cartItem = prodRepo.findByProductid(Integer.parseInt(productId) );
+		  Bufcart buf = new Bufcart(); 
+		  buf.setEmail(loggedUser.getEmail());
+		  buf.setQuantity(1);
+		  buf.setPrice(cartItem.getPrice()); 
+		  buf.setProductId(cartItem);
+		  buf.setProductname(cartItem.getProductname());
+		  Date date = new Date(); buf.setDateAdded(date); 
+		  cartRepo.save(buf);
+		  resp.setStatus(ResponseCode.SUCCESS_CODE);
+		  resp.setMessage(ResponseCode.CART_UPD_MESSAGE_CODE);
+		  resp.setAUTH_TOKEN(AUTH_TOKEN); 
+		  } catch(Exception e) 
+		  {
+		  resp.setStatus(ResponseCode.FAILURE_CODE);
+		  resp.setMessage(e.getMessage()); 
+		  resp.setAUTH_TOKEN(AUTH_TOKEN); } } 
+		  else {
+		  resp.setStatus(ResponseCode.FAILURE_CODE);
+		  resp.setMessage(ResponseCode.FAILURE_MESSAGE); }
 		return new ResponseEntity<serverResp>(resp, HttpStatus.ACCEPTED);
 	}
 
@@ -280,6 +272,7 @@ public class UserController {
 				resp.setMessage(ResponseCode.VW_CART_MESSAGE);
 				resp.setAUTH_TOKEN(AUTH_TOKEN);
 				resp.setOblist(cartRepo.findByEmail(loggedUser.getEmail()));
+				System.out.println(resp.getOblist());
 				System.out.println("Inside View cart request method 3");
 			} catch (Exception e) {
 				resp.setStatus(ResponseCode.FAILURE_CODE);
@@ -346,7 +339,6 @@ public class UserController {
 		}
 		return new ResponseEntity<cartResp>(resp, HttpStatus.ACCEPTED);
 	}
-
 
 	@GetMapping("/placeOrder") // DA VERIFICARE
 	public ResponseEntity<serverResp> placeOrder(@RequestHeader(name = WebConstants.USER_AUTH_TOKEN) String AUTH_TOKEN)
