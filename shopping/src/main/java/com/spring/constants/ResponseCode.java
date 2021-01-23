@@ -32,7 +32,7 @@ public class ResponseCode {
 
 	// Order
 	public static final String ORD_STATUS_CODE = "PENDING";
-	public static final String ORD_SUCCESS_MESSAGE = "PLA_ORD";
+	public static final String ORD_SUCCESS_MESSAGE = "ORDER OK";
 
 	// Missing Information
 	public static final String MISSING_FAIL_MSG = "INFO_MISSING";

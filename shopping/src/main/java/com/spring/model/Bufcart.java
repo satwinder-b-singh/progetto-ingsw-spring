@@ -36,16 +36,16 @@ public class Bufcart implements Serializable {
 
 	private String productname;
 
-	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private PlaceOrder orderId;
-
-	public PlaceOrder getOrderId() {
-		return orderId;
-	}
-
-	public void setOrderId(PlaceOrder orderId) {
-		this.orderId = orderId;
-	}
+//	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+//	private PlaceOrder orderId;
+//
+//	public PlaceOrder getOrderId() {
+//		return orderId;
+//	}
+//
+//	public void setOrderId(PlaceOrder orderId) {
+//		this.orderId = orderId;
+//	}
 
 	public String getProductname() {
 		return productname;
@@ -106,7 +106,7 @@ public class Bufcart implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Bufcart [bufcartId=" + bufcartId + ", orderId=" + orderId + ", email=" + email + ", dateAdded="
+		return "Bufcart [bufcartId=" + bufcartId + " , email=" + email + ", dateAdded="
 				+ dateAdded + ", quantity=" + quantity + ", price=" + price + ", productId=" + productId
 				+ ", productname=" + productname + "]";
 	}

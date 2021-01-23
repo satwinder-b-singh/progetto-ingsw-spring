@@ -223,66 +223,66 @@ public class AdminController {
 		return new ResponseEntity<prodResp>(resp, HttpStatus.ACCEPTED);
 	}
 
-	@GetMapping("/viewOrders")
-	public ResponseEntity<viewOrdResp> viewOrders(@RequestHeader(name = WebConstants.USER_AUTH_TOKEN) String AUTH_TOKEN)
-			throws IOException {
-
-		viewOrdResp resp = new viewOrdResp();
-		if (!Validator.isStringEmpty(AUTH_TOKEN) && jwtutil.checkToken(AUTH_TOKEN) != null) {
-			try {
-				resp.setStatus(ResponseCode.SUCCESS_CODE);
-				resp.setMessage(ResponseCode.VIEW_SUCCESS_MESSAGE);
-				resp.setAUTH_TOKEN(AUTH_TOKEN);
-				List<order> orderList = new ArrayList<>();
-				List<PlaceOrder> poList = ordRepo.findAll();
-				poList.forEach((po) -> {
-					order ord = new order();
-					ord.setOrderBy(po.getEmail());
-					ord.setOrderId(po.getOrderId());
-					ord.setOrderStatus(po.getOrderStatus());
-					ord.setProducts(cartRepo.findAllByOrderId(po.getOrderId()));
-					orderList.add(ord);
-				});
-				resp.setOrderlist(orderList);
-			} catch (Exception e) {
-				resp.setStatus(ResponseCode.FAILURE_CODE);
-				resp.setMessage(e.getMessage());
-				resp.setAUTH_TOKEN(AUTH_TOKEN);
-			}
-		} else {
-			resp.setStatus(ResponseCode.FAILURE_CODE);
-			resp.setMessage(ResponseCode.FAILURE_MESSAGE);
-		}
-		return new ResponseEntity<viewOrdResp>(resp, HttpStatus.ACCEPTED);
-	}
-
-	@PostMapping("/updateOrder")
-	public ResponseEntity<serverResp> updateOrders(
-			@RequestHeader(name = WebConstants.USER_AUTH_TOKEN) String AUTH_TOKEN,
-			@RequestParam(name = WebConstants.ORD_ID) String orderId,
-			@RequestParam(name = WebConstants.ORD_STATUS) String orderStatus) throws IOException {
-
-		serverResp resp = new serverResp();
-		if (Validator.isStringEmpty(orderId) || Validator.isStringEmpty(orderStatus)) {
-			resp.setStatus(ResponseCode.BAD_REQUEST_CODE);
-			resp.setMessage(ResponseCode.BAD_REQUEST_MESSAGE);
-		} else if (!Validator.isStringEmpty(AUTH_TOKEN) && jwtutil.checkToken(AUTH_TOKEN) != null) {
-			try {
-				PlaceOrder pc = ordRepo.findByOrderId(Integer.parseInt(orderId));
-				pc.setOrderStatus(orderStatus);
-				ordRepo.save(pc);
-				resp.setStatus(ResponseCode.SUCCESS_CODE);
-				resp.setMessage(ResponseCode.UPD_ORD_SUCCESS_MESSAGE);
-				resp.setAUTH_TOKEN(AUTH_TOKEN);
-			} catch (Exception e) {
-				resp.setStatus(ResponseCode.FAILURE_CODE);
-				resp.setMessage(e.toString());
-				resp.setAUTH_TOKEN(AUTH_TOKEN);
-			}
-		} else {
-			resp.setStatus(ResponseCode.FAILURE_CODE);
-			resp.setMessage(ResponseCode.FAILURE_MESSAGE);
-		}
-		return new ResponseEntity<serverResp>(resp, HttpStatus.ACCEPTED);
-	}
+//	@GetMapping("/viewOrders")
+//	public ResponseEntity<viewOrdResp> viewOrders(@RequestHeader(name = WebConstants.USER_AUTH_TOKEN) String AUTH_TOKEN)
+//			throws IOException {
+//
+//		viewOrdResp resp = new viewOrdResp();
+//		if (!Validator.isStringEmpty(AUTH_TOKEN) && jwtutil.checkToken(AUTH_TOKEN) != null) {
+//			try {
+//				resp.setStatus(ResponseCode.SUCCESS_CODE);
+//				resp.setMessage(ResponseCode.VIEW_SUCCESS_MESSAGE);
+//				resp.setAUTH_TOKEN(AUTH_TOKEN);
+//				List<order> orderList = new ArrayList<>();
+//				List<PlaceOrder> poList = ordRepo.findAll();
+//				poList.forEach((po) -> {
+//					order ord = new order();
+//					ord.setOrderBy(po.getEmail());
+//					ord.setOrderId(po.getOrderId());
+//					ord.setOrderStatus(po.getOrderStatus());
+//					ord.setProducts(cartRepo.findAllByOrderId(po.getOrderId()));
+//					orderList.add(ord);
+//				});
+//				resp.setOrderlist(orderList);
+//			} catch (Exception e) {
+//				resp.setStatus(ResponseCode.FAILURE_CODE);
+//				resp.setMessage(e.getMessage());
+//				resp.setAUTH_TOKEN(AUTH_TOKEN);
+//			}
+//		} else {
+//			resp.setStatus(ResponseCode.FAILURE_CODE);
+//			resp.setMessage(ResponseCode.FAILURE_MESSAGE);
+//		}
+//		return new ResponseEntity<viewOrdResp>(resp, HttpStatus.ACCEPTED);
+//	}
+//
+//	@PostMapping("/updateOrder")
+//	public ResponseEntity<serverResp> updateOrders(
+//			@RequestHeader(name = WebConstants.USER_AUTH_TOKEN) String AUTH_TOKEN,
+//			@RequestParam(name = WebConstants.ORD_ID) String orderId,
+//			@RequestParam(name = WebConstants.ORD_STATUS) String orderStatus) throws IOException {
+//
+//		serverResp resp = new serverResp();
+//		if (Validator.isStringEmpty(orderId) || Validator.isStringEmpty(orderStatus)) {
+//			resp.setStatus(ResponseCode.BAD_REQUEST_CODE);
+//			resp.setMessage(ResponseCode.BAD_REQUEST_MESSAGE);
+//		} else if (!Validator.isStringEmpty(AUTH_TOKEN) && jwtutil.checkToken(AUTH_TOKEN) != null) {
+//			try {
+//				PlaceOrder pc = ordRepo.findByOrderId(Integer.parseInt(orderId));
+//				pc.setOrderStatus(orderStatus);
+//				ordRepo.save(pc);
+//				resp.setStatus(ResponseCode.SUCCESS_CODE);
+//				resp.setMessage(ResponseCode.UPD_ORD_SUCCESS_MESSAGE);
+//				resp.setAUTH_TOKEN(AUTH_TOKEN);
+//			} catch (Exception e) {
+//				resp.setStatus(ResponseCode.FAILURE_CODE);
+//				resp.setMessage(e.toString());
+//				resp.setAUTH_TOKEN(AUTH_TOKEN);
+//			}
+//		} else {
+//			resp.setStatus(ResponseCode.FAILURE_CODE);
+//			resp.setMessage(ResponseCode.FAILURE_MESSAGE);
+//		}
+//		return new ResponseEntity<serverResp>(resp, HttpStatus.ACCEPTED);
+//	}
 }

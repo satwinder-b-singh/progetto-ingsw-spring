@@ -3,12 +3,15 @@ package com.spring.model;
 import java.io.Serializable;
 import java.util.Arrays;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.Table;
+
+import org.springframework.transaction.annotation.Transactional;
 
 @Entity
 @Table(name = "Product")
@@ -42,7 +45,7 @@ public class Product implements Serializable {
 	}
 
 	@Lob
-	private byte[] productimage;
+	 private byte[] productimage;
 
 	public int getProductid() {
 		return productid;
