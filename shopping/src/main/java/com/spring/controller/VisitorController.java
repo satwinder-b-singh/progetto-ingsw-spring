@@ -33,6 +33,7 @@ import com.spring.response.prodResp;
 @RequestMapping("/visitor")
 public class VisitorController {
 	List<Product> products;
+	
 	@Autowired
 	private ProductRepository prodRepo;
 
@@ -73,16 +74,17 @@ public class VisitorController {
 
 		return new ResponseEntity<prodResp>(resp, HttpStatus.ACCEPTED);
 	}
-	@PostMapping("/getProductsByCategory") // Funziona , ma non carica l'img
+	@PostMapping("/getProductsByCategory")  
 	public ResponseEntity<prodResp> getProductsByCategory(@RequestBody  String categoria) throws IOException {
 
 		prodResp resp = new prodResp();
  
 		try {
+			resp.setOblist(prodRepo.findAll(ProductRepository.categoryLike(categoria)));
 			resp.setStatus(ResponseCode.SUCCESS_CODE);
 			resp.setMessage(ResponseCode.LIST_SUCCESS_MESSAGE);
 
-			resp.setOblist(prodRepo.findAll(ProductRepository.categoryLike(categoria)));
+			
 			System.out.println(resp.getOblist());
 		} catch (Exception e) {
 			resp.setStatus(ResponseCode.FAILURE_CODE);

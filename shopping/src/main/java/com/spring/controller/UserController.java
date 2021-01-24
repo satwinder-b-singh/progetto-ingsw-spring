@@ -114,8 +114,7 @@ public class UserController {
 			resp.setMessage(ResponseCode.SUCCESS_MESSAGE);
 			resp.setAUTH_TOKEN(jwtToken);
 			PlaceOrder po = new PlaceOrder();
-			 
-			 
+
 		} else {
 			resp.setStatus(ResponseCode.FAILURE_CODE);
 			resp.setMessage(ResponseCode.FAILURE_MESSAGE);
@@ -233,53 +232,53 @@ public class UserController {
 	public ResponseEntity<serverResp> addToCart(@RequestHeader(name = WebConstants.USER_AUTH_TOKEN) String AUTH_TOKEN,
 			@RequestBody String productId) throws IOException {
 		serverResp resp = new serverResp();
-		
-		  if (!Validator.isStringEmpty(AUTH_TOKEN) && jwtutil.checkToken(AUTH_TOKEN) !=
-		  null) { 
-			  try {
-		  User loggedUser = jwtutil.checkToken(AUTH_TOKEN);
-		  Product cartItem = prodRepo.findByProductid(Integer.parseInt(productId) );
-		  Bufcart buf = new Bufcart(); 
-		  buf.setEmail(loggedUser.getEmail());
-		  buf.setQuantity(1);
-		  buf.setPrice(cartItem.getPrice()); 
-		  buf.setProductId(cartItem);
-		  buf.setProductname(cartItem.getProductname());
-		  Date date = new Date(); buf.setDateAdded(date); 
-		  cartRepo.save(buf);
-		  resp.setStatus(ResponseCode.SUCCESS_CODE);
-		  resp.setMessage(ResponseCode.CART_UPD_MESSAGE_CODE);
-		  resp.setAUTH_TOKEN(AUTH_TOKEN); 
-		  } catch(Exception e) 
-		  {
-		  resp.setStatus(ResponseCode.FAILURE_CODE);
-		  resp.setMessage(e.getMessage()); 
-		  resp.setAUTH_TOKEN(AUTH_TOKEN); } } 
-		  else {
-		  resp.setStatus(ResponseCode.FAILURE_CODE);
-		  resp.setMessage(ResponseCode.FAILURE_MESSAGE); }
+
+		if (!Validator.isStringEmpty(AUTH_TOKEN) && jwtutil.checkToken(AUTH_TOKEN) != null) {
+			try {
+				User loggedUser = jwtutil.checkToken(AUTH_TOKEN);
+				Product cartItem = prodRepo.findByProductid(Integer.parseInt(productId));
+				Bufcart buf = new Bufcart();
+				buf.setEmail(loggedUser.getEmail());
+				buf.setQuantity(1);
+				buf.setPrice(cartItem.getPrice());
+				buf.setProductId(cartItem);
+				buf.setProductname(cartItem.getProductname());
+				Date date = new Date();
+				buf.setDateAdded(date);
+				cartRepo.save(buf);
+				resp.setStatus(ResponseCode.SUCCESS_CODE);
+				resp.setMessage(ResponseCode.CART_UPD_MESSAGE_CODE);
+				resp.setAUTH_TOKEN(AUTH_TOKEN);
+			} catch (Exception e) {
+				resp.setStatus(ResponseCode.FAILURE_CODE);
+				resp.setMessage(e.getMessage());
+				resp.setAUTH_TOKEN(AUTH_TOKEN);
+			}
+		} else {
+			resp.setStatus(ResponseCode.FAILURE_CODE);
+			resp.setMessage(ResponseCode.FAILURE_MESSAGE);
+		}
 		return new ResponseEntity<serverResp>(resp, HttpStatus.ACCEPTED);
 	}
 
-	 
 	@Transactional
-	public List<Bufcart> visualizzaCarrello(String email)
-	{
+	public List<Bufcart> visualizzaCarrello(String email) {
 		return cartRepo.findAllByEmail(email);
 	}
+
 	@Transactional
 	@GetMapping("/viewCart")
 	public ResponseEntity<cartResp> viewCart(@RequestHeader(name = WebConstants.USER_AUTH_TOKEN) String AUTH_TOKEN)
 			throws IOException {
- 		cartResp resp = new cartResp();
+		cartResp resp = new cartResp();
 		if (!Validator.isStringEmpty(AUTH_TOKEN) && jwtutil.checkToken(AUTH_TOKEN) != null) {
 			try {
- 				User loggedUser = jwtutil.checkToken(AUTH_TOKEN);
+				User loggedUser = jwtutil.checkToken(AUTH_TOKEN);
 				resp.setStatus(ResponseCode.SUCCESS_CODE);
-				resp.setMessage(ResponseCode.VW_CART_MESSAGE); 
+				resp.setMessage(ResponseCode.VW_CART_MESSAGE);
 				resp.setAUTH_TOKEN(AUTH_TOKEN);
 				resp.setOblist(visualizzaCarrello(loggedUser.getEmail()));
- 			} catch (Exception e) {
+			} catch (Exception e) {
 				resp.setStatus(ResponseCode.FAILURE_CODE);
 				resp.setMessage(e.getMessage());
 				resp.setAUTH_TOKEN(AUTH_TOKEN);
@@ -299,9 +298,11 @@ public class UserController {
 		if (!Validator.isStringEmpty(AUTH_TOKEN) && jwtutil.checkToken(AUTH_TOKEN) != null) {
 			try {
 				User loggedUser = jwtutil.checkToken(AUTH_TOKEN);
-			//	Bufcart selCart = cartRepo.findByBufcartIdAndEmail(Integer.parseInt(bufcartid), loggedUser.getEmail());
-				//selCart.setQuantity(Integer.parseInt(quantity));
-				//cartRepo.save(selCart);
+				// Bufcart selCart =
+				// cartRepo.findByBufcartIdAndEmail(Integer.parseInt(bufcartid),
+				// loggedUser.getEmail());
+				// selCart.setQuantity(Integer.parseInt(quantity));
+				// cartRepo.save(selCart);
 				List<Bufcart> bufcartlist = cartRepo.findByEmail(loggedUser.getEmail());
 				resp.setStatus(ResponseCode.SUCCESS_CODE);
 				resp.setMessage(ResponseCode.UPD_CART_MESSAGE);
@@ -344,12 +345,10 @@ public class UserController {
 		}
 		return new ResponseEntity<cartResp>(resp, HttpStatus.ACCEPTED);
 	}
-	
-	
+
 	@PostMapping("/checkout")
 	public ResponseEntity<serverResp> checkout(@RequestHeader(name = WebConstants.USER_AUTH_TOKEN) String AUTH_TOKEN)
-			throws IOException 
-	{
+			throws IOException {
 		serverResp resp = new serverResp();
 		if (!Validator.isStringEmpty(AUTH_TOKEN) && jwtutil.checkToken(AUTH_TOKEN) != null) {
 			try {
@@ -357,8 +356,7 @@ public class UserController {
 				resp.setStatus(ResponseCode.SUCCESS_CODE);
 				resp.setMessage(ResponseCode.ORD_SUCCESS_MESSAGE);
 				resp.setAUTH_TOKEN(AUTH_TOKEN);
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 				resp.setStatus(ResponseCode.FAILURE_CODE);
 				resp.setMessage(e.getMessage());
 				resp.setAUTH_TOKEN(AUTH_TOKEN);
@@ -368,11 +366,9 @@ public class UserController {
 			resp.setMessage(ResponseCode.FAILURE_MESSAGE);
 		}
 		return new ResponseEntity<serverResp>(resp, HttpStatus.ACCEPTED);
-		 
-		
+
 	}
-	
-	
+
 	@GetMapping("/placeOrder") // DA VERIFICARE
 	public ResponseEntity<serverResp> placeOrder(@RequestHeader(name = WebConstants.USER_AUTH_TOKEN) String AUTH_TOKEN)
 			throws IOException {
@@ -381,38 +377,40 @@ public class UserController {
 		if (!Validator.isStringEmpty(AUTH_TOKEN) && jwtutil.checkToken(AUTH_TOKEN) != null) {
 			try {
 				User loggedUser = jwtutil.checkToken(AUTH_TOKEN);
-				 
-				//PlaceOrder po = ordRepo.findByOrderId(loggedUser.getOrder().getOrderId());
+
+				// PlaceOrder po = ordRepo.findByOrderId(loggedUser.getOrder().getOrderId());
 				PlaceOrder po = new PlaceOrder();
-				 
-				 
+
 				po.setEmail(loggedUser.getEmail());
 				Date date = new Date();
 				po.setOrderDate(date);
 				po.setOrderStatus(ResponseCode.ORD_SUCCESS_MESSAGE);
-				 System.out.println("arrivoooooo\n\n\n\n\n");
 				double total = 0;
 				List<Bufcart> buflist = cartRepo.findAllByEmail(loggedUser.getEmail());
-				
+
 				for (Bufcart buf : buflist) {
 					total = total + (buf.getQuantity() * buf.getPrice());
 					Product p = prodRepo.findByProductid(buf.getProductId().getProductid());
 					p.setQuantity(p.getQuantity() - buf.getQuantity());
-					prodRepo.save(p);
-				}				 
-				
-				po.setTotalCost(total);
-				//System.out.println("mi stampo po"+ po.getOrderId()+"  "+po.getOrderStatus()+ "  "  );
-				 
-				PlaceOrder res = ordRepo.save(po);//(po)
-				 System.out.println("arrivoooooo\n\n\n\n\n");
+					 
+						prodRepo.save(p);
+				}
 
-				  buflist.forEach(bufcart -> {
-					// bufcart.setOrderId(loggedUser.getOrder());
-					 cartRepo.deleteByBufcartIdAndEmail(bufcart.getBufcartId(), bufcart.getEmail());
-				  
-				  });
-				 
+				po.setTotalCost(total);
+
+				PlaceOrder res = ordRepo.save(po);// (po)
+				buflist.forEach(bufcart -> {
+					cartRepo.deleteByBufcartIdAndEmail(bufcart.getBufcartId(), bufcart.getEmail());
+
+				});
+				for (Bufcart buf : buflist) {
+					 
+					Product p = prodRepo.findByProductid(buf.getProductId().getProductid());
+					if (p.getQuantity() <= 0)
+						prodRepo.deleteByProductid(p.getProductid());
+					 
+				}
+
 				resp.setStatus(ResponseCode.SUCCESS_CODE);
 				resp.setMessage(ResponseCode.ORD_SUCCESS_MESSAGE);
 				resp.setAUTH_TOKEN(AUTH_TOKEN);
