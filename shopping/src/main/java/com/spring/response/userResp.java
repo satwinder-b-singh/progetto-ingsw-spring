@@ -1,6 +1,7 @@
 package com.spring.response;
 
 import java.io.Serializable;
+import java.util.List;
 
 import com.spring.model.Address;
 import com.spring.model.User;
@@ -11,6 +12,15 @@ public class userResp implements Serializable {
 	private String status;
 	private String message;
 	private String AUTH_TOKEN;
+	private List<User> registredUser;
+	
+	public List<User> getRegistredUser() {
+		return registredUser;
+	}
+
+	public void setRegistredUser(List<User> registredUser) {
+		this.registredUser = registredUser;
+	}
 
 	public String getAUTH_TOKEN() {
 		return AUTH_TOKEN;
