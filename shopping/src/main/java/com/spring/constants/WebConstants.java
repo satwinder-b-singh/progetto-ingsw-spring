@@ -22,13 +22,17 @@ public class WebConstants {
 	public static final String ORD_ID = "orderId";
 
 	// Address
-	public static final String ADR_NAME = "address";
-	public static final String ADR_CITY = "city";
-	public static final String ADR_STATE = "state";
-	public static final String ADR_COUNTRY = "country";
-	public static final String ADR_ZP = "zipcode";
-	public static final String PHONE = "phonenumber";
+	public static final String ADR_NAME = "nome";
+	public static final String ADR_SURNAME = "cognome";
+	public static final String ADR_STATE = "nazione";
+	public static final String ADR_ADDRESS = "indirizzo";
+	public static final String ADR_CAP = "CAP";
+	public static final String ADR_MAIL = "email";
+	public static final String ADR_PHONE = "phone";
+	public static final String ADR_COUNTRY = "regione";
+	public static final String ADR_CITY = "citta";
 
+	
 	// BUFCART
 	public static final String BUF_ID = "bufcartid";
 	public static final String BUF_QUANTITY = "quantity";

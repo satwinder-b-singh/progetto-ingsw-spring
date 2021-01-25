@@ -126,10 +126,13 @@ public class UserController {
 	public ResponseEntity<userResp> addAddress(@Valid @RequestBody Address address,
 			@RequestHeader(name = WebConstants.USER_AUTH_TOKEN) String AUTH_TOKEN) {
 		userResp resp = new userResp();
-		if (Validator.isAddressEmpty(address)) {
+		
+		System.out.println(address);
+		
+		/* if (Validator.isAddressEmpty(address)) {
 			resp.setStatus(ResponseCode.BAD_REQUEST_CODE);
 			resp.setMessage(ResponseCode.BAD_REQUEST_MESSAGE);
-		} else if (!Validator.isStringEmpty(AUTH_TOKEN) && jwtutil.checkToken(AUTH_TOKEN) != null) {
+		} else  */ if (!Validator.isStringEmpty(AUTH_TOKEN) && jwtutil.checkToken(AUTH_TOKEN) != null) {
 			try {
 				User user = jwtutil.checkToken(AUTH_TOKEN);
 				user.setAddress(address);
@@ -139,6 +142,8 @@ public class UserController {
 				resp.setMessage(ResponseCode.CUST_ADR_ADD);
 				resp.setUser(user);
 				resp.setAddress(adr);
+				System.out.println(resp.getUser());
+				System.out.println(resp.getAddress());
 				resp.setAUTH_TOKEN(AUTH_TOKEN);
 			} catch (Exception e) {
 				resp.setStatus(ResponseCode.FAILURE_CODE);
@@ -162,12 +167,17 @@ public class UserController {
 				Address adr = addrRepo.findByUser(user);
 
 				HashMap<String, String> map = new HashMap<>();
-				map.put(WebConstants.ADR_NAME, adr.getAddress());
-				map.put(WebConstants.ADR_CITY, adr.getCity());
-				map.put(WebConstants.ADR_STATE, adr.getState());
-				map.put(WebConstants.ADR_COUNTRY, adr.getCountry());
-				map.put(WebConstants.ADR_ZP, String.valueOf(adr.getZipcode()));
-				map.put(WebConstants.PHONE, adr.getPhonenumber());
+				map.put(WebConstants.ADR_NAME, adr.getNome());
+				map.put(WebConstants.ADR_SURNAME, adr.getCognome());
+				map.put(WebConstants.ADR_STATE, adr.getNazione());
+				map.put(WebConstants.ADR_ADDRESS, adr.getIndirizzo());
+				map.put(WebConstants.ADR_CAP, adr.getCAP());
+				map.put(WebConstants.ADR_MAIL, adr.getEmail());
+				map.put(WebConstants.ADR_PHONE, adr.getPhone());
+				map.put(WebConstants.ADR_COUNTRY, adr.getRegione());
+				map.put(WebConstants.ADR_CITY, adr.getCitta());
+				
+				
 
 				resp.setStatus(ResponseCode.SUCCESS_CODE);
 				resp.setMessage(ResponseCode.CUST_ADR_ADD);

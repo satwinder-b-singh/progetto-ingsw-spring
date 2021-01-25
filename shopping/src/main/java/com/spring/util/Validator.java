@@ -70,7 +70,7 @@ public class Validator {
 		return false;
 	}
 
-	public static boolean isAddressEmpty(Address address) {
+	/* public static boolean isAddressEmpty(Address address) {
 		if (address.getAddress() == null || address.getAddress() == "") {
 			return true;
 		}
@@ -90,7 +90,7 @@ public class Validator {
 			return true;
 		}
 		return false;
-	}
+	}		*/
 
 	public static boolean isProductEmpty(Product prod) {
 
