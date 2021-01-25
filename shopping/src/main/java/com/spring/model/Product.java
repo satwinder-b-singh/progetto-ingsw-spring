@@ -21,13 +21,15 @@ public class Product implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int productid;
-	private String description;
 	private String productname;
-	private double price;
+	private String description;
 	private int quantity;
+	private double price;
+	
 	private String categoria;
 	private String size;
 	private String sex;
+	
 	public String getSex() {
 		return sex;
 	}

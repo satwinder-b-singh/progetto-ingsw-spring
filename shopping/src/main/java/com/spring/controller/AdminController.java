@@ -82,14 +82,16 @@ public class AdminController {
 
 	@PostMapping("/addProduct") // FUNZIONA
 	public ResponseEntity<prodResp> addProduct(@RequestHeader(name = WebConstants.USER_AUTH_TOKEN) String AUTH_TOKEN,
-			@RequestParam(name = WebConstants.PROD_FILE) MultipartFile prodImage,
-			@RequestParam(name = WebConstants.PROD_DESC) String description,
-			@RequestParam(name = WebConstants.PROD_PRICE) String price,
+			
 			@RequestParam(name = WebConstants.PROD_NAME) String productname,
+			@RequestParam(name = WebConstants.PROD_DESC) String description,
 			@RequestParam(name = WebConstants.PROD_QUANITY) String quantity,
+			@RequestParam(name = WebConstants.PROD_PRICE) String price,
 			@RequestParam(name = WebConstants.PROD_CATEGORY) String category,
 			@RequestParam(name = WebConstants.PROD_SIZE) String size,
-			@RequestParam(name = WebConstants.PROD_SEX) String sex) throws IOException {
+			@RequestParam(name = WebConstants.PROD_SEX) String sex,
+			@RequestParam(name = WebConstants.PROD_FILE) MultipartFile prodImage)
+	throws IOException {
 		prodResp resp = new prodResp();
 		if (Validator.isStringEmpty(productname) || Validator.isStringEmpty(description)
 				|| Validator.isStringEmpty(price) || Validator.isStringEmpty(quantity)
@@ -101,14 +103,13 @@ public class AdminController {
 			try {
 
 				Product prod = new Product( );
-				prod.setDescription(description);
-				prod.setPrice(Double.parseDouble(price));
 				prod.setProductname(productname);
+				prod.setDescription(description);
 				prod.setQuantity(Integer.parseInt(quantity));
+				prod.setPrice(Double.parseDouble(price));
 				prod.setCategoria(category);
 				prod.setSize(size);
-				prod.setSize(sex);
-
+				prod.setSex(sex);
 				prod.setProductimage(prodImage.getBytes());
 				prodRepo.save(prod);
 
