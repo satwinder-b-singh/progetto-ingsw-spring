@@ -198,7 +198,7 @@ public class AdminController {
 		}
 		return new ResponseEntity<serverResp>(resp, HttpStatus.ACCEPTED);
 	}
-    @RequestMapping("/getUsers")
+   /* @RequestMapping("/getUsers")
     public ResponseEntity<userResp> getUsers(@RequestHeader(name = WebConstants.USER_AUTH_TOKEN) String AUTH_TOKEN)
     {
     	List<User> registredUser ;
@@ -207,6 +207,32 @@ public class AdminController {
     		
     		try {
     				registredUser = userRepo.findAllByUsertype("customer");
+    				resp.setStatus(ResponseCode.SUCCESS_CODE);
+    				resp.setMessage(ResponseCode.LIST_USER_MESSAGE);
+    				resp.setAUTH_TOKEN(AUTH_TOKEN);
+			} catch (Exception e) {
+				resp.setStatus(ResponseCode.FAILURE_CODE);
+				resp.setMessage(e.toString());
+				resp.setAUTH_TOKEN(AUTH_TOKEN);
+			}
+    	} else {
+    		resp.setStatus(ResponseCode.BAD_REQUEST_CODE);
+			resp.setMessage(ResponseCode.BAD_REQUEST_MESSAGE);
+    	}
+    	return new ResponseEntity<userResp>(resp, HttpStatus.ACCEPTED);
+    }*/
+    @RequestMapping("/getUsers")
+    public ResponseEntity<userResp> getUsers(@RequestHeader(name = WebConstants.USER_AUTH_TOKEN) String AUTH_TOKEN)
+    {
+    	List<User> registredUser ;
+    	userResp resp = new userResp();
+    	if (!Validator.isStringEmpty(AUTH_TOKEN) && jwtutil.checkToken(AUTH_TOKEN) != null) {
+    		
+    		try {
+    				 
+    			registredUser = userRepo.findAllByUsertype("customer");	
+    			resp.setRegistredUser(registredUser);
+    			System.out.println(registredUser);
     				resp.setStatus(ResponseCode.SUCCESS_CODE);
     				resp.setMessage(ResponseCode.LIST_USER_MESSAGE);
     				resp.setAUTH_TOKEN(AUTH_TOKEN);

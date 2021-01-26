@@ -121,7 +121,30 @@ public class UserController {
 		}
 		return new ResponseEntity<serverResp>(resp, HttpStatus.OK);
 	}
-
+	@PostMapping("/getUserById")
+	public ResponseEntity<serverResp> getUserById(
+			@RequestHeader(name = WebConstants.USER_AUTH_TOKEN) String AUTH_TOKEN)throws IOException {
+		serverResp resp = new serverResp();
+		System.out.println("TOKENNNN" + AUTH_TOKEN);
+		if (!Validator.isStringEmpty(AUTH_TOKEN) && jwtutil.checkToken(AUTH_TOKEN) != null) {
+			try {
+				User  loggedUser = jwtutil.checkToken(AUTH_TOKEN);
+				System.out.println(loggedUser);
+				resp.setObject(loggedUser);
+				resp.setStatus(ResponseCode.SUCCESS_CODE);
+				resp.setMessage(ResponseCode.SUCCESS_MESSAGE);
+				resp.setAUTH_TOKEN(AUTH_TOKEN);
+			} catch (Exception e) {
+				resp.setStatus(ResponseCode.FAILURE_CODE);
+				resp.setMessage(e.getMessage());
+				resp.setAUTH_TOKEN(AUTH_TOKEN);
+			}
+		} else {
+			resp.setStatus(ResponseCode.FAILURE_CODE);
+			resp.setMessage(ResponseCode.FAILURE_MESSAGE);
+		}
+		return new ResponseEntity<serverResp>(resp, HttpStatus.ACCEPTED);
+	}
 	@PostMapping("/addAddress") // FUNZIONA
 	public ResponseEntity<userResp> addAddress(@Valid @RequestBody Address address,
 			@RequestHeader(name = WebConstants.USER_AUTH_TOKEN) String AUTH_TOKEN) {
