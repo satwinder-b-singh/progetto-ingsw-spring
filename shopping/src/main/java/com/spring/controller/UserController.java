@@ -100,10 +100,9 @@ public class UserController {
  
 		try {
 			resp.setOblist(prodRepo.findAll(ProductRepository.sexLike(sex)));
+			 
 			resp.setStatus(ResponseCode.SUCCESS_CODE);
 			resp.setMessage(ResponseCode.LIST_SUCCESS_MESSAGE);
-
-			
 			System.out.println(resp.getOblist());
 		} catch (Exception e) {
 			resp.setStatus(ResponseCode.FAILURE_CODE);
