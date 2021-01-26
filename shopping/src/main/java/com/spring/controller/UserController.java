@@ -93,6 +93,25 @@ public class UserController {
 		}
 		return new ResponseEntity<serverResp>(resp, HttpStatus.ACCEPTED);
 	}
+	@PostMapping("/getProductsBySex")  
+	public ResponseEntity<prodResp> getProductsBySex(@RequestBody  String sex) throws IOException {
+
+		prodResp resp = new prodResp();
+ 
+		try {
+			resp.setOblist(prodRepo.findAll(ProductRepository.sexLike(sex)));
+			resp.setStatus(ResponseCode.SUCCESS_CODE);
+			resp.setMessage(ResponseCode.LIST_SUCCESS_MESSAGE);
+
+			
+			System.out.println(resp.getOblist());
+		} catch (Exception e) {
+			resp.setStatus(ResponseCode.FAILURE_CODE);
+			resp.setMessage(e.getMessage());
+
+		}
+		return new ResponseEntity<prodResp>(resp, HttpStatus.ACCEPTED);	
+	}
 
 	@PostMapping("/verify")
 	public ResponseEntity<serverResp> verifyUser(@Valid @RequestBody Map<String, String> credential) {
@@ -145,6 +164,7 @@ public class UserController {
 		}
 		return new ResponseEntity<serverResp>(resp, HttpStatus.ACCEPTED);
 	}
+	
 	@PostMapping("/addAddress") // FUNZIONA
 	public ResponseEntity<userResp> addAddress(@Valid @RequestBody Address address,
 			@RequestHeader(name = WebConstants.USER_AUTH_TOKEN) String AUTH_TOKEN) {
