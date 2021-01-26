@@ -11,14 +11,16 @@ import com.spring.model.Bufcart;
 @Repository
 @Transactional
 public interface CartRepository extends JpaRepository<Bufcart, Long> {
-
+	 
 	List<Bufcart> findByEmail(String email);
+     
+	//Bufcart findByBufcartIdAndEmail(int bufcartId, String email);
 
-	Bufcart findByBufcartIdAndEmail(int bufcartId, String email);
-
-	void deleteByBufcartIdAndEmail(int bufcartId, String email);
-
+	 void deleteByBufcartIdAndEmail(int bufcartId, String email);
+	
 	List<Bufcart> findAllByEmail(String email);
 
-	List<Bufcart> findAllByOrderId(int orderId);
+	 
+	
+	//List<Bufcart> findAllByOrderId(int orderId);
 }

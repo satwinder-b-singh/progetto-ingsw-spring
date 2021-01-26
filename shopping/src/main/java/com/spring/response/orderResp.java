@@ -18,10 +18,7 @@ public class orderResp {
 
 	private List<Bufcart> cartList;
 
-	@Override
-	public String toString() {
-		return "orderResp [orderId=" + orderId + ", cartList=" + cartList + "]";
-	}
+
 
 	public List<Bufcart> getCartList() {
 		return cartList;

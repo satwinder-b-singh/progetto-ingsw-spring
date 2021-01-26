@@ -29,10 +29,13 @@ public class ResponseCode {
 	public static final String UPD_CART_MESSAGE = "UPD_CART";
 
 	public static final String DEL_CART_SUCCESS_MESSAGE = "DEL_CART";
+	
+	public static final String LIST_USER_MESSAGE = "LIST_USER";
+
 
 	// Order
 	public static final String ORD_STATUS_CODE = "PENDING";
-	public static final String ORD_SUCCESS_MESSAGE = "PLA_ORD";
+	public static final String ORD_SUCCESS_MESSAGE = "ORDER OK";
 
 	// Missing Information
 	public static final String MISSING_FAIL_MSG = "INFO_MISSING";

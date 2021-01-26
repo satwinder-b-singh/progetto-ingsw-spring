@@ -12,6 +12,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -113,22 +114,48 @@ public class UserController {
 			resp.setMessage(ResponseCode.SUCCESS_MESSAGE);
 			resp.setAUTH_TOKEN(jwtToken);
 			PlaceOrder po = new PlaceOrder();
-			po.setUser(loggedUser);
+
 		} else {
 			resp.setStatus(ResponseCode.FAILURE_CODE);
 			resp.setMessage(ResponseCode.FAILURE_MESSAGE);
 		}
 		return new ResponseEntity<serverResp>(resp, HttpStatus.OK);
 	}
-
+	@PostMapping("/getUserById")
+	public ResponseEntity<serverResp> getUserById(
+			@RequestHeader(name = WebConstants.USER_AUTH_TOKEN) String AUTH_TOKEN)throws IOException {
+		serverResp resp = new serverResp();
+		System.out.println("TOKENNNN" + AUTH_TOKEN);
+		if (!Validator.isStringEmpty(AUTH_TOKEN) && jwtutil.checkToken(AUTH_TOKEN) != null) {
+			try {
+				User  loggedUser = jwtutil.checkToken(AUTH_TOKEN);
+				System.out.println(loggedUser);
+				resp.setObject(loggedUser);
+				resp.setStatus(ResponseCode.SUCCESS_CODE);
+				resp.setMessage(ResponseCode.SUCCESS_MESSAGE);
+				resp.setAUTH_TOKEN(AUTH_TOKEN);
+			} catch (Exception e) {
+				resp.setStatus(ResponseCode.FAILURE_CODE);
+				resp.setMessage(e.getMessage());
+				resp.setAUTH_TOKEN(AUTH_TOKEN);
+			}
+		} else {
+			resp.setStatus(ResponseCode.FAILURE_CODE);
+			resp.setMessage(ResponseCode.FAILURE_MESSAGE);
+		}
+		return new ResponseEntity<serverResp>(resp, HttpStatus.ACCEPTED);
+	}
 	@PostMapping("/addAddress") // FUNZIONA
 	public ResponseEntity<userResp> addAddress(@Valid @RequestBody Address address,
 			@RequestHeader(name = WebConstants.USER_AUTH_TOKEN) String AUTH_TOKEN) {
 		userResp resp = new userResp();
-		if (Validator.isAddressEmpty(address)) {
+		
+		System.out.println(address);
+		
+		/* if (Validator.isAddressEmpty(address)) {
 			resp.setStatus(ResponseCode.BAD_REQUEST_CODE);
 			resp.setMessage(ResponseCode.BAD_REQUEST_MESSAGE);
-		} else if (!Validator.isStringEmpty(AUTH_TOKEN) && jwtutil.checkToken(AUTH_TOKEN) != null) {
+		} else  */ if (!Validator.isStringEmpty(AUTH_TOKEN) && jwtutil.checkToken(AUTH_TOKEN) != null) {
 			try {
 				User user = jwtutil.checkToken(AUTH_TOKEN);
 				user.setAddress(address);
@@ -138,6 +165,8 @@ public class UserController {
 				resp.setMessage(ResponseCode.CUST_ADR_ADD);
 				resp.setUser(user);
 				resp.setAddress(adr);
+				System.out.println(resp.getUser());
+				System.out.println(resp.getAddress());
 				resp.setAUTH_TOKEN(AUTH_TOKEN);
 			} catch (Exception e) {
 				resp.setStatus(ResponseCode.FAILURE_CODE);
@@ -161,12 +190,17 @@ public class UserController {
 				Address adr = addrRepo.findByUser(user);
 
 				HashMap<String, String> map = new HashMap<>();
-				map.put(WebConstants.ADR_NAME, adr.getAddress());
-				map.put(WebConstants.ADR_CITY, adr.getCity());
-				map.put(WebConstants.ADR_STATE, adr.getState());
-				map.put(WebConstants.ADR_COUNTRY, adr.getCountry());
-				map.put(WebConstants.ADR_ZP, String.valueOf(adr.getZipcode()));
-				map.put(WebConstants.PHONE, adr.getPhonenumber());
+				map.put(WebConstants.ADR_NAME, adr.getNome());
+				map.put(WebConstants.ADR_SURNAME, adr.getCognome());
+				map.put(WebConstants.ADR_STATE, adr.getNazione());
+				map.put(WebConstants.ADR_ADDRESS, adr.getIndirizzo());
+				map.put(WebConstants.ADR_CAP, adr.getCAP());
+				map.put(WebConstants.ADR_MAIL, adr.getEmail());
+				map.put(WebConstants.ADR_PHONE, adr.getPhone());
+				map.put(WebConstants.ADR_COUNTRY, adr.getRegione());
+				map.put(WebConstants.ADR_CITY, adr.getCitta());
+				
+				
 
 				resp.setStatus(ResponseCode.SUCCESS_CODE);
 				resp.setMessage(ResponseCode.CUST_ADR_ADD);
@@ -185,7 +219,7 @@ public class UserController {
 		return new ResponseEntity<response>(resp, HttpStatus.ACCEPTED);
 	}
 
-	@PostMapping("/getProducts") // Funziona , ma non carica l'img
+	@PostMapping("/getProducts")
 	public ResponseEntity<prodResp> getProducts(@RequestHeader(name = WebConstants.USER_AUTH_TOKEN) String AUTH_TOKEN)
 			throws IOException {
 
@@ -227,18 +261,15 @@ public class UserController {
 		return new ResponseEntity<prodResp>(resp, HttpStatus.ACCEPTED);
 	}
 
-	@PostMapping("/addToCart") // FUNZIONA
+	@PostMapping("/addToCart")
 	public ResponseEntity<serverResp> addToCart(@RequestHeader(name = WebConstants.USER_AUTH_TOKEN) String AUTH_TOKEN,
-			@RequestBody Product productId	) throws IOException {
-		 
+			@RequestBody String productId) throws IOException {
 		serverResp resp = new serverResp();
-		 if (!Validator.isStringEmpty(AUTH_TOKEN) && jwtutil.checkToken(AUTH_TOKEN) != null)
-				 {
-			try {
 
+		if (!Validator.isStringEmpty(AUTH_TOKEN) && jwtutil.checkToken(AUTH_TOKEN) != null) {
+			try {
 				User loggedUser = jwtutil.checkToken(AUTH_TOKEN);
-				Product cartItem = prodRepo.findByProductid(productId.getProductid());
-				System.out.println("a");
+				Product cartItem = prodRepo.findByProductid(Integer.parseInt(productId));
 				Bufcart buf = new Bufcart();
 				buf.setEmail(loggedUser.getEmail());
 				buf.setQuantity(1);
@@ -247,12 +278,10 @@ public class UserController {
 				buf.setProductname(cartItem.getProductname());
 				Date date = new Date();
 				buf.setDateAdded(date);
-				System.out.println("a");
 				cartRepo.save(buf);
 				resp.setStatus(ResponseCode.SUCCESS_CODE);
 				resp.setMessage(ResponseCode.CART_UPD_MESSAGE_CODE);
 				resp.setAUTH_TOKEN(AUTH_TOKEN);
-				System.out.println("ci simu?");
 			} catch (Exception e) {
 				resp.setStatus(ResponseCode.FAILURE_CODE);
 				resp.setMessage(e.getMessage());
@@ -265,20 +294,23 @@ public class UserController {
 		return new ResponseEntity<serverResp>(resp, HttpStatus.ACCEPTED);
 	}
 
-	@GetMapping("/viewCart") // FUNZIONA
+	@Transactional
+	public List<Bufcart> visualizzaCarrello(String email) {
+		return cartRepo.findAllByEmail(email);
+	}
+
+	@Transactional
+	@GetMapping("/viewCart")
 	public ResponseEntity<cartResp> viewCart(@RequestHeader(name = WebConstants.USER_AUTH_TOKEN) String AUTH_TOKEN)
 			throws IOException {
-		logger.info("Inside View cart request method");
 		cartResp resp = new cartResp();
 		if (!Validator.isStringEmpty(AUTH_TOKEN) && jwtutil.checkToken(AUTH_TOKEN) != null) {
 			try {
-				logger.info("Inside View cart request method 2");
 				User loggedUser = jwtutil.checkToken(AUTH_TOKEN);
 				resp.setStatus(ResponseCode.SUCCESS_CODE);
 				resp.setMessage(ResponseCode.VW_CART_MESSAGE);
 				resp.setAUTH_TOKEN(AUTH_TOKEN);
-				resp.setOblist(cartRepo.findByEmail(loggedUser.getEmail()));
-				System.out.println("Inside View cart request method 3");
+				resp.setOblist(visualizzaCarrello(loggedUser.getEmail()));
 			} catch (Exception e) {
 				resp.setStatus(ResponseCode.FAILURE_CODE);
 				resp.setMessage(e.getMessage());
@@ -299,9 +331,11 @@ public class UserController {
 		if (!Validator.isStringEmpty(AUTH_TOKEN) && jwtutil.checkToken(AUTH_TOKEN) != null) {
 			try {
 				User loggedUser = jwtutil.checkToken(AUTH_TOKEN);
-				Bufcart selCart = cartRepo.findByBufcartIdAndEmail(Integer.parseInt(bufcartid), loggedUser.getEmail());
-				selCart.setQuantity(Integer.parseInt(quantity));
-				cartRepo.save(selCart);
+				// Bufcart selCart =
+				// cartRepo.findByBufcartIdAndEmail(Integer.parseInt(bufcartid),
+				// loggedUser.getEmail());
+				// selCart.setQuantity(Integer.parseInt(quantity));
+				// cartRepo.save(selCart);
 				List<Bufcart> bufcartlist = cartRepo.findByEmail(loggedUser.getEmail());
 				resp.setStatus(ResponseCode.SUCCESS_CODE);
 				resp.setMessage(ResponseCode.UPD_CART_MESSAGE);
@@ -345,25 +379,29 @@ public class UserController {
 		return new ResponseEntity<cartResp>(resp, HttpStatus.ACCEPTED);
 	}
 
-	@GetMapping("/findByCategory")
-	public ResponseEntity< prodResp> findByCategory(
-	)//@RequestBody  String category
+	@PostMapping("/checkout")
+	public ResponseEntity<serverResp> checkout(@RequestHeader(name = WebConstants.USER_AUTH_TOKEN) String AUTH_TOKEN)
 			throws IOException {
-				prodResp resp = new prodResp();
-				try {
-					resp.setStatus(ResponseCode.SUCCESS_CODE);
-					resp.setMessage(ResponseCode.LIST_SUCCESS_MESSAGE);
+		serverResp resp = new serverResp();
+		if (!Validator.isStringEmpty(AUTH_TOKEN) && jwtutil.checkToken(AUTH_TOKEN) != null) {
+			try {
+				System.out.println("L'utente ha pagato ");
+				resp.setStatus(ResponseCode.SUCCESS_CODE);
+				resp.setMessage(ResponseCode.ORD_SUCCESS_MESSAGE);
+				resp.setAUTH_TOKEN(AUTH_TOKEN);
+			} catch (Exception e) {
+				resp.setStatus(ResponseCode.FAILURE_CODE);
+				resp.setMessage(e.getMessage());
+				resp.setAUTH_TOKEN(AUTH_TOKEN);
+			}
+		} else {
+			resp.setStatus(ResponseCode.FAILURE_CODE);
+			resp.setMessage(ResponseCode.FAILURE_MESSAGE);
+		}
+		return new ResponseEntity<serverResp>(resp, HttpStatus.ACCEPTED);
 
-					resp.setOblist(prodRepo.findAllByName("size"));
-				} catch (Exception e) {
-					resp.setStatus(ResponseCode.FAILURE_CODE);
-					resp.setMessage(e.getMessage());
-
-				}
-
-				return new ResponseEntity<prodResp>(resp, HttpStatus.ACCEPTED);
-	 
 	}
+
 	@GetMapping("/placeOrder") // DA VERIFICARE
 	public ResponseEntity<serverResp> placeOrder(@RequestHeader(name = WebConstants.USER_AUTH_TOKEN) String AUTH_TOKEN)
 			throws IOException {
@@ -372,27 +410,40 @@ public class UserController {
 		if (!Validator.isStringEmpty(AUTH_TOKEN) && jwtutil.checkToken(AUTH_TOKEN) != null) {
 			try {
 				User loggedUser = jwtutil.checkToken(AUTH_TOKEN);
-				PlaceOrder po = ordRepo.findByOrderId(loggedUser.getOrder().getOrderId());
+
+				// PlaceOrder po = ordRepo.findByOrderId(loggedUser.getOrder().getOrderId());
+				PlaceOrder po = new PlaceOrder();
+
 				po.setEmail(loggedUser.getEmail());
 				Date date = new Date();
 				po.setOrderDate(date);
-				po.setOrderStatus(ResponseCode.ORD_STATUS_CODE);
+				po.setOrderStatus(ResponseCode.ORD_SUCCESS_MESSAGE);
 				double total = 0;
 				List<Bufcart> buflist = cartRepo.findAllByEmail(loggedUser.getEmail());
+
 				for (Bufcart buf : buflist) {
 					total = total + (buf.getQuantity() * buf.getPrice());
 					Product p = prodRepo.findByProductid(buf.getProductId().getProductid());
 					p.setQuantity(p.getQuantity() - buf.getQuantity());
-					prodRepo.save(p);
+					 
+						prodRepo.save(p);
 				}
+
 				po.setTotalCost(total);
-				po.setUser(loggedUser);
-				PlaceOrder res = ordRepo.save(po);
+
+				PlaceOrder res = ordRepo.save(po);// (po)
 				buflist.forEach(bufcart -> {
-					bufcart.setOrderId(po);
-					cartRepo.save(bufcart);
+					cartRepo.deleteByBufcartIdAndEmail(bufcart.getBufcartId(), bufcart.getEmail());
 
 				});
+				for (Bufcart buf : buflist) {
+					 
+					Product p = prodRepo.findByProductid(buf.getProductId().getProductid());
+					if (p.getQuantity() <= 0)
+						prodRepo.deleteByProductid(p.getProductid());
+					 
+				}
+
 				resp.setStatus(ResponseCode.SUCCESS_CODE);
 				resp.setMessage(ResponseCode.ORD_SUCCESS_MESSAGE);
 				resp.setAUTH_TOKEN(AUTH_TOKEN);

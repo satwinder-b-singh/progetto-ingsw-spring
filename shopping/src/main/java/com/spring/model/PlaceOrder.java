@@ -16,6 +16,7 @@ import javax.persistence.Table;
 @Table(name = "PlaceOrder")
 public class PlaceOrder {
 
+	 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int orderId;
@@ -23,28 +24,6 @@ public class PlaceOrder {
 	private Date orderDate;
 	private double totalCost;
 	
-	@OneToOne(fetch = FetchType.LAZY, optional = false)
-	@JoinColumn(name = "userid", nullable = false)
-	private User user;
-	
-	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "orderId")
-	private Bufcart buf;
-	
-	public User getUser() {
-		return user;
-	}
-	
-	public Bufcart getBuf() {
-		return buf;
-	}
-
-	public void setBuf(Bufcart buf) {
-		this.buf = buf;
-	}
-
-	public void setUser(User user) {
-		this.user = user;
-	}
 
 	public int getOrderId() {
 		return orderId;

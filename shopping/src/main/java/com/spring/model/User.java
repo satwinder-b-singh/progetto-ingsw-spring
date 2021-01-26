@@ -26,9 +26,9 @@ public class User implements Serializable {
 	private String usertype;
 	private int age;
 	
-	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user")
-	@JoinColumn(name = "user", nullable = false)
-	private PlaceOrder order;
+//	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user")
+//	@JoinColumn(name = "user", nullable = false)
+//	private PlaceOrder order;
 	
 	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user")
 	private Address address;
@@ -65,18 +65,19 @@ public class User implements Serializable {
 		this.address = address;
 	}
 	
+	 
+//	public PlaceOrder getOrder() {
+//		return order;
+//	}
+//
+//	public void setOrder(PlaceOrder order) {
+//		this.order = order;
+//	}
+
 	@Override
 	public String toString() {
 		return "User [userid=" + userid + ", email=" + email + ", username=" + username + ", password=" + password
-				+ ", usertype=" + usertype + ", age=" + age + ", order=" + order + ", address=" + address + "]";
-	}
-
-	public PlaceOrder getOrder() {
-		return order;
-	}
-
-	public void setOrder(PlaceOrder order) {
-		this.order = order;
+				+ ", usertype=" + usertype + ", age=" + age + ", address=" + address + "]";
 	}
 
 	public String getEmail() {
