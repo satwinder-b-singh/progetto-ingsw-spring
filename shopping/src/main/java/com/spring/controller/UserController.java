@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.spring.constants.ProductMetaModel;
 import com.spring.constants.ResponseCode;
 import com.spring.constants.WebConstants;
 import com.spring.model.Address;
@@ -48,7 +49,7 @@ import com.spring.util.jwtUtil;
 public class UserController {
 
 	private static Logger logger = Logger.getLogger(UserController.class.getName());
-
+	List<Product> products;
 	@Autowired
 	private UserRepository userRepo;
 
@@ -94,6 +95,32 @@ public class UserController {
 		return new ResponseEntity<serverResp>(resp, HttpStatus.ACCEPTED);
 	}
 
+	@PostMapping("/updateUser") // FUNZIONA
+	public ResponseEntity<serverResp> updateUser(@RequestHeader(name = WebConstants.USER_AUTH_TOKEN) String AUTH_TOKEN,
+			@RequestBody User user) {
+		System.out.println("entroo");
+         System.out.println("entro con "+user);
+		serverResp resp = new serverResp();
+		try {
+			if (!Validator.isStringEmpty(AUTH_TOKEN) && jwtutil.checkToken(AUTH_TOKEN) != null) {
+				resp.setStatus(ResponseCode.SUCCESS_CODE);
+				resp.setMessage(ResponseCode.CUST_REG);
+				 
+				User reg = userRepo.save(user);
+				System.out.println(user.toString());
+
+				resp.setObject(reg);
+			} else {
+				resp.setStatus(ResponseCode.FAILURE_CODE);
+				resp.setMessage(ResponseCode.FAILURE_MESSAGE );
+			}
+		} catch (Exception e) {
+			resp.setStatus(ResponseCode.FAILURE_CODE);
+			resp.setMessage(e.getMessage());
+		}
+		return new ResponseEntity<serverResp>(resp, HttpStatus.ACCEPTED);
+	}
+
 	@PostMapping("/verify")
 	public ResponseEntity<serverResp> verifyUser(@Valid @RequestBody Map<String, String> credential) {
 
@@ -121,14 +148,70 @@ public class UserController {
 		}
 		return new ResponseEntity<serverResp>(resp, HttpStatus.OK);
 	}
+	@RequestMapping("/findBySizeAndCategoryAndSex")
+	public ResponseEntity<prodResp> findByProductName(
+			@RequestParam(name = ProductMetaModel.SIZE, defaultValue = "") String size,
+			@RequestParam(name = ProductMetaModel.CATEGORIA, defaultValue = "") String categoria,
+			@RequestParam(name = ProductMetaModel.SEX, defaultValue = "") String sex) throws IOException {
+		System.out.println("size : "+size );
+		System.out.println("categoria : "+categoria );
+		System.out.println("sex : "+sex );
+		
+		prodResp resp = new prodResp();
+		try {
+           if (size.equals("") && sex.equals("") && categoria.equals(""))
+           {
+        	   resp.setOblist(prodRepo.findAll());
+           }
+           else
+           {
+        	   if(!size.equals("") && !categoria.equals("") && !sex.equals(""))
+        		   products = prodRepo
+					.findAll(ProductRepository.getProductBySizeAndCategoryAndSex(size,categoria , sex )) ;
+        	   if(size.equals("") && !categoria.equals("") && !sex.equals("") )  
+        		   products = prodRepo
+					.findAll(ProductRepository.getProductByCategoryAndSex(categoria , sex )) ;//Categoria e sex
+
+        	   if  (size.equals("") && categoria.equals("") && !sex.equals("")) //SEX   
+            	  products = prodRepo.findAll(ProductRepository.sexLike(sex));
+              
+               if(size.equals("") && !categoria.equals("") &&  sex.equals("")) //CATEGORIA
+            	   products = prodRepo.findAll(ProductRepository.categoryLike(categoria));
+               
+               if(!size.equals("") &&  categoria.equals("") &&  sex.equals("")) //SIZE
+            	   products = prodRepo.findAll(ProductRepository.sizeLike(size));
+               
+               if(!size.equals("") &&  categoria.equals("") &&  !sex.equals("")) //SIZE && SEX
+            	   products = prodRepo.findAll(ProductRepository.getProductBySizeAndSex(size , sex));
+               if(!size.equals("") &&  !categoria.equals("") &&  sex.equals("")) //SIZE && CATEGORIA
+            	   products = prodRepo.findAll(ProductRepository.getProductByCategoryAndSize(categoria , size));
+               
+
+   			resp.setStatus(ResponseCode.SUCCESS_CODE);
+   			resp.setMessage(ResponseCode.LIST_SUCCESS_MESSAGE);
+   			   
+   			
+           }
+           System.out.println("ciaoo2222" + products);
+  			resp.setOblist(products);
+  		 
+		} catch (Exception e) {
+			resp.setStatus(ResponseCode.FAILURE_CODE);
+			resp.setMessage(e.getMessage());
+
+		}
+
+		return new ResponseEntity<prodResp>(resp, HttpStatus.ACCEPTED);
+
+	}
 	@PostMapping("/getUserById")
-	public ResponseEntity<serverResp> getUserById(
-			@RequestHeader(name = WebConstants.USER_AUTH_TOKEN) String AUTH_TOKEN)throws IOException {
+	public ResponseEntity<serverResp> getUserById(@RequestHeader(name = WebConstants.USER_AUTH_TOKEN) String AUTH_TOKEN)
+			throws IOException {
 		serverResp resp = new serverResp();
 		System.out.println("TOKENNNN" + AUTH_TOKEN);
 		if (!Validator.isStringEmpty(AUTH_TOKEN) && jwtutil.checkToken(AUTH_TOKEN) != null) {
 			try {
-				User  loggedUser = jwtutil.checkToken(AUTH_TOKEN);
+				User loggedUser = jwtutil.checkToken(AUTH_TOKEN);
 				System.out.println(loggedUser);
 				resp.setObject(loggedUser);
 				resp.setStatus(ResponseCode.SUCCESS_CODE);
@@ -145,17 +228,19 @@ public class UserController {
 		}
 		return new ResponseEntity<serverResp>(resp, HttpStatus.ACCEPTED);
 	}
+
 	@PostMapping("/addAddress") // FUNZIONA
-	public ResponseEntity<userResp> addAddress(  @RequestBody Address address,
+	public ResponseEntity<userResp> addAddress(@RequestBody Address address,
 			@RequestHeader(name = WebConstants.USER_AUTH_TOKEN) String AUTH_TOKEN) {
 		userResp resp = new userResp();
-		
+
 		System.out.println(address);
-		
-		/* if (Validator.isAddressEmpty(address)) {
-			resp.setStatus(ResponseCode.BAD_REQUEST_CODE);
-			resp.setMessage(ResponseCode.BAD_REQUEST_MESSAGE);
-		} else  */ if (!Validator.isStringEmpty(AUTH_TOKEN) && jwtutil.checkToken(AUTH_TOKEN) != null) {
+
+		/*
+		 * if (Validator.isAddressEmpty(address)) {
+		 * resp.setStatus(ResponseCode.BAD_REQUEST_CODE);
+		 * resp.setMessage(ResponseCode.BAD_REQUEST_MESSAGE); } else
+		 */ if (!Validator.isStringEmpty(AUTH_TOKEN) && jwtutil.checkToken(AUTH_TOKEN) != null) {
 			try {
 				User user = jwtutil.checkToken(AUTH_TOKEN);
 				user.setAddress(address);
@@ -199,8 +284,6 @@ public class UserController {
 				map.put(WebConstants.ADR_PHONE, adr.getPhone());
 				map.put(WebConstants.ADR_COUNTRY, adr.getRegione());
 				map.put(WebConstants.ADR_CITY, adr.getCitta());
-				
-				
 
 				resp.setStatus(ResponseCode.SUCCESS_CODE);
 				resp.setMessage(ResponseCode.CUST_ADR_ADD);
@@ -260,6 +343,7 @@ public class UserController {
 
 		return new ResponseEntity<prodResp>(resp, HttpStatus.ACCEPTED);
 	}
+
 	@PostMapping("/getProductsBySex") // Funziona , ma non carica l'img
 	public ResponseEntity<prodResp> getProductsBySex(@RequestBody String sex) throws IOException {
 
@@ -270,8 +354,7 @@ public class UserController {
 			resp.setMessage(ResponseCode.LIST_SUCCESS_MESSAGE);
 
 			resp.setOblist(prodRepo.findAll(ProductRepository.sexLike(sex)));
-			
-			
+
 		} catch (Exception e) {
 			resp.setStatus(ResponseCode.FAILURE_CODE);
 			resp.setMessage(e.getMessage());
@@ -280,6 +363,7 @@ public class UserController {
 
 		return new ResponseEntity<prodResp>(resp, HttpStatus.ACCEPTED);
 	}
+
 	@PostMapping("/addToCart")
 	public ResponseEntity<serverResp> addToCart(@RequestHeader(name = WebConstants.USER_AUTH_TOKEN) String AUTH_TOKEN,
 			@RequestBody String productId) throws IOException {
@@ -463,8 +547,8 @@ public class UserController {
 					total = total + (buf.getQuantity() * buf.getPrice());
 					Product p = prodRepo.findByProductid(buf.getProductId().getProductid());
 					p.setQuantity(p.getQuantity() - buf.getQuantity());
-					 
-						prodRepo.save(p);
+
+					prodRepo.save(p);
 				}
 
 				po.setTotalCost(total);
@@ -475,11 +559,11 @@ public class UserController {
 
 				});
 				for (Bufcart buf : buflist) {
-					 
+
 					Product p = prodRepo.findByProductid(buf.getProductId().getProductid());
 					if (p.getQuantity() <= 0)
 						prodRepo.deleteByProductid(p.getProductid());
-					 
+
 				}
 
 				resp.setStatus(ResponseCode.SUCCESS_CODE);
