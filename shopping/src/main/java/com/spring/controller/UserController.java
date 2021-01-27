@@ -93,24 +93,6 @@ public class UserController {
 		}
 		return new ResponseEntity<serverResp>(resp, HttpStatus.ACCEPTED);
 	}
-	@PostMapping("/getProductsBySex")  
-	public ResponseEntity<prodResp> getProductsBySex(@RequestBody  String sex) throws IOException {
-
-		prodResp resp = new prodResp();
- 
-		try {
-			resp.setOblist(prodRepo.findAll(ProductRepository.sexLike(sex)));
-			 
-			resp.setStatus(ResponseCode.SUCCESS_CODE);
-			resp.setMessage(ResponseCode.LIST_SUCCESS_MESSAGE);
-			System.out.println(resp.getOblist());
-		} catch (Exception e) {
-			resp.setStatus(ResponseCode.FAILURE_CODE);
-			resp.setMessage(e.getMessage());
-
-		}
-		return new ResponseEntity<prodResp>(resp, HttpStatus.ACCEPTED);	
-	}
 
 	@PostMapping("/verify")
 	public ResponseEntity<serverResp> verifyUser(@Valid @RequestBody Map<String, String> credential) {
@@ -163,9 +145,8 @@ public class UserController {
 		}
 		return new ResponseEntity<serverResp>(resp, HttpStatus.ACCEPTED);
 	}
-	
 	@PostMapping("/addAddress") // FUNZIONA
-	public ResponseEntity<userResp> addAddress(@Valid @RequestBody Address address,
+	public ResponseEntity<userResp> addAddress(  @RequestBody Address address,
 			@RequestHeader(name = WebConstants.USER_AUTH_TOKEN) String AUTH_TOKEN) {
 		userResp resp = new userResp();
 		
@@ -279,7 +260,26 @@ public class UserController {
 
 		return new ResponseEntity<prodResp>(resp, HttpStatus.ACCEPTED);
 	}
+	@PostMapping("/getProductsBySex") // Funziona , ma non carica l'img
+	public ResponseEntity<prodResp> getProductsBySex(@RequestBody String sex) throws IOException {
 
+		prodResp resp = new prodResp();
+
+		try {
+			resp.setStatus(ResponseCode.SUCCESS_CODE);
+			resp.setMessage(ResponseCode.LIST_SUCCESS_MESSAGE);
+
+			resp.setOblist(prodRepo.findAll(ProductRepository.sexLike(sex)));
+			
+			
+		} catch (Exception e) {
+			resp.setStatus(ResponseCode.FAILURE_CODE);
+			resp.setMessage(e.getMessage());
+
+		}
+
+		return new ResponseEntity<prodResp>(resp, HttpStatus.ACCEPTED);
+	}
 	@PostMapping("/addToCart")
 	public ResponseEntity<serverResp> addToCart(@RequestHeader(name = WebConstants.USER_AUTH_TOKEN) String AUTH_TOKEN,
 			@RequestBody String productId) throws IOException {
@@ -398,28 +398,47 @@ public class UserController {
 		return new ResponseEntity<cartResp>(resp, HttpStatus.ACCEPTED);
 	}
 
-	@PostMapping("/checkout")
-	public ResponseEntity<serverResp> checkout(@RequestHeader(name = WebConstants.USER_AUTH_TOKEN) String AUTH_TOKEN)
-			throws IOException {
-		serverResp resp = new serverResp();
-		if (!Validator.isStringEmpty(AUTH_TOKEN) && jwtutil.checkToken(AUTH_TOKEN) != null) {
-			try {
-				System.out.println("L'utente ha pagato ");
-				resp.setStatus(ResponseCode.SUCCESS_CODE);
-				resp.setMessage(ResponseCode.ORD_SUCCESS_MESSAGE);
-				resp.setAUTH_TOKEN(AUTH_TOKEN);
-			} catch (Exception e) {
-				resp.setStatus(ResponseCode.FAILURE_CODE);
-				resp.setMessage(e.getMessage());
-				resp.setAUTH_TOKEN(AUTH_TOKEN);
-			}
-		} else {
-			resp.setStatus(ResponseCode.FAILURE_CODE);
-			resp.setMessage(ResponseCode.FAILURE_MESSAGE);
-		}
-		return new ResponseEntity<serverResp>(resp, HttpStatus.ACCEPTED);
-
-	}
+//	@PostMapping("/checkout")
+//	public ResponseEntity<serverResp> checkout(@RequestHeader(name = WebConstants.USER_AUTH_TOKEN) String AUTH_TOKEN,
+//			@Valid@RequestBody Map<String, String> address)
+//			throws IOException {
+//		serverResp resp = new serverResp();
+//		if (!Validator.isStringEmpty(AUTH_TOKEN) && jwtutil.checkToken(AUTH_TOKEN) != null) {
+//			try {
+//				System.out.println("L'utente ha pagato ");
+//				User userLogged = jwtutil.checkToken(AUTH_TOKEN).
+//
+//				Address addr = new Address();
+//				
+//				addr.setNome(address.get(WebConstants.ADR_NAME));
+//				addr.setCognome(address.get(WebConstants.ADR_SURNAME));
+//				addr.setNazione(address.get(WebConstants.ADR_STATE));
+//				addr.setIndirizzo(address.get(WebConstants.ADR_ADDRESS));
+//				addr.setCitta(address.get(WebConstants.ADR_CITY));
+//				addr.setRegione(address.get(WebConstants.ADR_COUNTRY));
+//				addr.setCAP(address.get(WebConstants.ADR_CAP));
+//				addr.setEmail(address.get(WebConstants.ADR_MAIL));
+//				addr.setPhone(address.get(WebConstants.ADR_PHONE));
+//				System.out.println(address);
+//				//addr.setUser(userLogged);
+//				
+//				resp.setObject(userLogged);
+//				System.out.println("aadress in checkout" + addr);
+//				resp.setStatus(ResponseCode.SUCCESS_CODE);
+//				resp.setMessage(ResponseCode.ORD_SUCCESS_MESSAGE);
+//				resp.setAUTH_TOKEN(AUTH_TOKEN);
+//			} catch (Exception e) {
+//				resp.setStatus(ResponseCode.FAILURE_CODE);
+//				resp.setMessage(e.getMessage());
+//				resp.setAUTH_TOKEN(AUTH_TOKEN);
+//			}
+//		} else {
+//			resp.setStatus(ResponseCode.FAILURE_CODE);
+//			resp.setMessage(ResponseCode.FAILURE_MESSAGE);
+//		}
+//		return new ResponseEntity<serverResp>(resp, HttpStatus.ACCEPTED);
+//
+//	}
 
 	@GetMapping("/placeOrder") // DA VERIFICARE
 	public ResponseEntity<serverResp> placeOrder(@RequestHeader(name = WebConstants.USER_AUTH_TOKEN) String AUTH_TOKEN)

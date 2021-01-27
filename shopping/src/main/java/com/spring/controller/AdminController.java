@@ -57,7 +57,7 @@ public class AdminController {
 	@Autowired
 	private jwtUtil jwtutil;
 
-	@PostMapping("/verify") // FUNZIONA
+	@PostMapping("/verify") 
 	public ResponseEntity<serverResp> verifyUser(@Valid @RequestBody HashMap<String, String> credential) {
 		String email = "";
 		String password = "";
@@ -81,7 +81,7 @@ public class AdminController {
 		return new ResponseEntity<serverResp>(resp, HttpStatus.OK);
 	}
 
-	@PostMapping("/addProduct") // FUNZIONA
+	@PostMapping("/addProduct")  
 	public ResponseEntity<prodResp> addProduct(@RequestHeader(name = WebConstants.USER_AUTH_TOKEN) String AUTH_TOKEN,
 			
 			@RequestParam(name = WebConstants.PROD_NAME) String productname,
@@ -156,11 +156,11 @@ public class AdminController {
 	@PostMapping("/updateProducts") // FUNZIONA
 	public ResponseEntity<serverResp> updateProducts(
 			@RequestHeader(name = WebConstants.USER_AUTH_TOKEN) String AUTH_TOKEN,
-			@RequestParam(name = WebConstants.PROD_FILE, required = false) MultipartFile prodImage,
 			@RequestParam(name = WebConstants.PROD_DESC) String description,
+			@RequestParam(name = WebConstants.PROD_QUANITY) String quantity,
 			@RequestParam(name = WebConstants.PROD_PRICE) String price,
 			@RequestParam(name = WebConstants.PROD_NAME) String productname,
-			@RequestParam(name = WebConstants.PROD_QUANITY) String quantity,
+			@RequestParam(name = WebConstants.PROD_FILE, required = false) MultipartFile prodImage,
 			@RequestParam(name = WebConstants.PROD_ID) String productid,
 			@RequestParam(name = WebConstants.PROD_CATEGORY) String categoria,
 			@RequestParam(name = WebConstants.PROD_SIZE) String size,
@@ -173,7 +173,7 @@ public class AdminController {
 			resp.setMessage(ResponseCode.BAD_REQUEST_MESSAGE);
 		} else if (!Validator.isStringEmpty(AUTH_TOKEN) && jwtutil.checkToken(AUTH_TOKEN) != null) {
 			try {
-				Product prodOrg;
+				Product prodOrg =prodRepo.findByProductid(Integer.parseInt(productid));
 				Product prod;
 				if (prodImage != null) {
 					prod = new Product(Integer.parseInt(productid), description, productname, Double.parseDouble(price),
@@ -183,6 +183,7 @@ public class AdminController {
 					prod = new Product(Integer.parseInt(productid), description, productname, Double.parseDouble(price),
 							Integer.parseInt(quantity), prodOrg.getProductimage(),categoria,size,sex);
 				}
+			 
 				prodRepo.save(prod);
 				resp.setStatus(ResponseCode.SUCCESS_CODE);
 				resp.setMessage(ResponseCode.UPD_SUCCESS_MESSAGE);

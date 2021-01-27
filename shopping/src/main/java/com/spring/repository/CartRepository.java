@@ -20,7 +20,7 @@ public interface CartRepository extends JpaRepository<Bufcart, Long> {
 	
 	List<Bufcart> findAllByEmail(String email);
 
-	 
+	void deleteByProductId(int productid);
 	
 	//List<Bufcart> findAllByOrderId(int orderId);
 }
